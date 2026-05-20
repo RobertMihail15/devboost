@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+{% block title %}Confirmare ștergere – DevBoost{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div style="font-size:3rem; margin-bottom:16px;">🗑️</div>
+  <h1 style="font-size:1.5rem; margin-bottom:12px;">Ești sigur?</h1>
+  <p style="color:var(--ink-muted); margin-bottom:8px;">Urmează să ștergi:</p>
+  <p style="font-weight:600; margin-bottom:28px; max-width:400px; text-align:center;">„{{ item_name }}"</p>
+  <p style="color:#dc2626; font-size:0.88rem; margin-bottom:28px;">Această acțiune este ireversibilă.</p>
+  <div style="display:flex; gap:12px;">
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn--primary" style="background:#dc2626; border-color:#dc2626;">🗑️ Da, șterge</button>
+    </form>
+    <a href="{{ cancel_url }}" class="btn btn--ghost">Anulează</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends 'core/base.html' %}
+{% block title %}Creează cont – DevBoost{% endblock %}
+{% block content %}
+<div class="auth-wrap" style="align-items:flex-start; padding-top:40px; min-height:calc(100vh - 64px);">
+<div style="width:100%; max-width:580px; margin:0 auto; padding: 0 16px 60px;">
+
+  <div class="auth-logo" style="text-align:center; margin-bottom:32px;">Dev<span>Boost</span></div>
+
+  {% if success %}
+  <!-- ── Success screen ── -->
+  <div style="text-align:center; padding:48px 32px; background:var(--surface); border:1px solid var(--surface-3); border-radius:var(--radius-lg);">
+    <div style="font-size:3.5rem; margin-bottom:16px;">{% if role == 'freelancer' %}💼{% else %}🔍{% endif %}</div>
+    <h2 style="font-size:1.5rem; margin-bottom:10px;">Bun venit, {{ name }}!</h2>
+    <p style="color:var(--ink-muted); margin-bottom:20px;">
+      {% if role == 'freelancer' %}
+        Profilul tău de freelancer a fost creat. Clienții te pot găsi acum pe platformă.
+      {% else %}
+        Contul tău de client a fost creat. Poți contacta freelancerii acum.
+      {% endif %}
+    </p>
+    <div class="alert alert--success" style="text-align:left; margin-bottom:24px;">
+      📧 <strong>Welcome to DevBoost!</strong> — {% if role == 'freelancer' %}Profilul tău va fi promovat către clienți activi.{% else %}Îți poți contacta primul freelancer chiar acum.{% endif %}
+    </div>
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <a href="{% url 'profile' %}" class="btn btn--primary">Mergi la profil →</a>
+      {% if role == 'client' %}
+      <a href="{% url 'freelancers' %}" class="btn btn--ghost">Caută freelanceri</a>
+      {% else %}
+      <a href="{% url 'freelancers' %}" class="btn btn--ghost">Vezi comunitatea</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% elif not role %}
+  <!-- ── Step 1: Alege rolul ── -->
+  <h1 style="text-align:center; font-size:1.6rem; margin-bottom:8px;">Creează-ți contul</h1>
+  <p style="text-align:center; color:var(--ink-muted); margin-bottom:32px; font-size:0.95rem;">Cum vrei să folosești DevBoost?</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+    <a href="{% url 'signup' %}?role=freelancer" style="text-decoration:none;">
+      <div class="role-card" id="role-freelancer">
+        <div class="role-card__icon">💼</div>
+        <h3 class="role-card__title">Sunt Freelancer</h3>
+        <p class="role-card__desc">Ofer servicii de development, design sau DevOps și caut clienți noi.</p>
+        <div class="role-card__tags">
+          <span>React</span><span>Django</span><span>Figma</span><span>AWS</span>
+        </div>
+        <div class="role-card__cta">Înregistrează-te ca freelancer →</div>
+      </div>
+    </a>
+
+    <a href="{% url 'signup' %}?role=client" style="text-decoration:none;">
+      <div class="role-card role-card--client" id="role-client">
+        <div class="role-card__icon">🔍</div>
+        <h3 class="role-card__title">Caut Freelanceri</h3>
+        <p class="role-card__desc">Am un proiect sau o firmă și caut programatori, designeri sau specialiști IT.</p>
+        <div class="role-card__tags">
+          <span>Startup</span><span>Agenție</span><span>Corporație</span><span>ONG</span>
+        </div>
+        <div class="role-card__cta">Înregistrează-te ca client →</div>
+      </div>
+    </a>
+
+  </div>
+
+  <p style="text-align:center; margin-top:24px; font-size:0.88rem; color:var(--ink-muted);">
+    Ai deja cont? <a href="{% url 'login' %}">Intră în cont</a>
+  </p>
+
+  {% else %}
+  <!-- ── Step 2: Formularul propriu-zis ── -->
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px;">
+    <a href="{% url 'signup' %}" style="color:var(--ink-faint); font-size:0.88rem; text-decoration:none;">← Înapoi</a>
+    <div style="flex:1; height:1px; background:var(--surface-3);"></div>
+    <span style="font-size:0.82rem; color:var(--ink-faint);">
+      {% if role == 'freelancer' %}💼 Cont Freelancer{% else %}🔍 Cont Client{% endif %}
+    </span>
+  </div>
+
+  <div style="background:var(--surface); border:1px solid var(--surface-3); border-radius:var(--radius-lg); padding:32px;">
+    <h1 style="font-size:1.3rem; margin-bottom:6px;">
+      {% if role == 'freelancer' %}Înregistrare Freelancer{% else %}Înregistrare Client{% endif %}
+    </h1>
+    <p style="color:var(--ink-muted); font-size:0.88rem; margin-bottom:24px;">
+      {% if role == 'freelancer' %}
+        Completează profilul tău. Clienții îl vor vedea pe pagina de freelanceri.
+      {% else %}
+        Creează contul tău de client pentru a putea contacta freelanceri.
+      {% endif %}
+    </p>
+
+    {% if error %}<div class="alert alert--error" style="margin-bottom:20px;">⚠️ {{ error }}</div>{% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="role" value="{{ role }}">
+
+      <div class="form-group">
+        <label>Nume complet *</label>
+        <input type="text" name="full_name" placeholder="ex. Alex Popescu" required>
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" name="email" placeholder="tu@exemplu.com" required>
+      </div>
+
+      {% if role == 'freelancer' %}
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Skill principal *</label>
+          <select name="skill" required>
+            {% for s in skills %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Ani experiență</label>
+          <input type="number" name="experience_years" value="1" min="0" max="50">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label>Descriere scurtă</label>
+        <textarea name="description" placeholder="Prezintă-te pe scurt — ce faci, cu ce tehnologii lucrezi, ce tip de proiecte cauți…" style="min-height:90px;"></textarea>
+      </div>
+      {% else %}
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Companie / Firmă</label>
+          <input type="text" name="company" placeholder="ex. Acme SRL">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Industrie</label>
+          <select name="industry">
+            <option value="">Selectează…</option>
+            {% for i in industries %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label>Ce tip de proiecte ai?</label>
+        <textarea name="description" placeholder="Descrie pe scurt ce proiecte sau nevoi ai — e opțional dar ajută freelancerii să te înțeleagă mai bine." style="min-height:80px;"></textarea>
+      </div>
+      {% endif %}
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:4px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Parolă * <span style="font-weight:400; color:var(--ink-faint);">(min. 6 caractere)</span></label>
+          <input type="password" name="password" placeholder="••••••••" required>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Confirmă parola *</label>
+          <input type="password" name="password2" placeholder="••••••••" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--lg" style="width:100%; justify-content:center; margin-top:20px;">
+        {% if role == 'freelancer' %}💼 Creează profil de freelancer{% else %}🔍 Creează cont de client{% endif %}
+      </button>
+    </form>
+
+    <p style="text-align:center; margin-top:16px; font-size:0.85rem; color:var(--ink-muted);">
+      Ai deja cont? <a href="{% url 'login' %}">Intră în cont</a>
+    </p>
+  </div>
+  {% endif %}
+</div>
+</div>
+{% endblock %}

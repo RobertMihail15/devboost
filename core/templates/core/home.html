@@ -1,0 +1,145 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}DevBoost – Grow Your Freelance IT Career{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero__badge animate">⚡ #1 Platform for IT Freelancers</div>
+    <h1 class="hero__title animate animate-delay-1">
+      DevBoost – <span class="highlight">Grow</span> your<br>freelance IT career
+    </h1>
+    <p class="hero__subtitle animate animate-delay-2">
+      Get clients, build your portfolio, and grow your online presence — all in one place designed for developers.
+    </p>
+    <div class="hero__actions animate animate-delay-3">
+      <a href="{% url 'signup' %}" class="btn btn--primary btn--lg">Join Now →</a>
+      <a href="{% url 'freelancers' %}" class="btn btn--ghost btn--lg">Browse Freelancers</a>
+    </div>
+    <div class="hero__stats animate animate-delay-3">
+      <div>
+        <div class="hero__stat-value">{{ total_freelancers }}+</div>
+        <div class="hero__stat-label">Freelancers registered</div>
+      </div>
+      <div>
+        <div class="hero__stat-value">{{ total_leads }}+</div>
+        <div class="hero__stat-label">Leads generated</div>
+      </div>
+      <div>
+        <div class="hero__stat-value">100%</div>
+        <div class="hero__stat-label">Free to join</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-header__tag">Why DevBoost</div>
+      <h2 class="section-header__title">Everything you need to succeed</h2>
+      <p class="section-header__sub">We handle the marketing so you can focus on what you do best — building great things.</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-card__icon">🎯</div>
+        <h3 class="benefit-card__title">Get More Clients</h3>
+        <p class="benefit-card__text">Our platform connects you directly with companies and startups actively looking for your exact skill set.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-card__icon">📈</div>
+        <h3 class="benefit-card__title">Improve Online Visibility</h3>
+        <p class="benefit-card__text">Your DevBoost profile is optimized for search engines, putting you in front of the right clients at the right time.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-card__icon">🔍</div>
+        <h3 class="benefit-card__title">SEO Optimized Profiles</h3>
+        <p class="benefit-card__text">Every profile includes structured data, semantic markup, and keyword optimization for maximum search visibility.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-card__icon">🤖</div>
+        <h3 class="benefit-card__title">Marketing Automation</h3>
+        <p class="benefit-card__text">Automated email campaigns, social media posts, and lead nurturing — all running in the background for you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-header__tag">How it works</div>
+      <h2 class="section-header__title">Three steps to your next client</h2>
+      <p class="section-header__sub">Getting started takes less than 5 minutes. No credit card required.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step__num">1</div>
+        <div class="step__content">
+          <h3 class="step__title">Sign up as a freelancer</h3>
+          <p class="step__text">Fill in your details, skills, and experience. It's completely free and takes under a minute.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">2</div>
+        <div class="step__content">
+          <h3 class="step__title">Create your profile</h3>
+          <p class="step__text">Describe yourself, add your portfolio links, and let clients know what you bring to the table.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">3</div>
+        <div class="step__content">
+          <h3 class="step__title">Get discovered by clients</h3>
+          <p class="step__text">Our SEO engine and marketing automation start working immediately, driving visibility to your profile.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED FREELANCERS -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-header__tag">Community</div>
+      <h2 class="section-header__title">Meet our featured freelancers</h2>
+      <p class="section-header__sub">Real professionals. Real results. Join them today.</p>
+    </div>
+    <div class="freelancers-grid">
+      {% for f in freelancers %}
+      <div class="freelancer-card">
+        <div class="freelancer-card__avatar">{{ f.full_name|slice:":1" }}</div>
+        <div>
+          <div class="freelancer-card__name">{{ f.full_name }}</div>
+          <span class="freelancer-card__skill">{{ f.skill }}</span>
+        </div>
+        <p class="freelancer-card__desc">{{ f.description }}</p>
+        <div class="freelancer-card__meta">⏳ {{ f.experience_years }} years of experience</div>
+        <a href="{% url 'signup' %}" class="btn btn--outline btn--sm">Contact</a>
+      </div>
+      {% empty %}
+      <p style="color:var(--ink-muted)">No freelancers yet. Run <code>python seed.py</code> to add sample data.</p>
+      {% endfor %}
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="{% url 'freelancers' %}" class="btn btn--outline">View all freelancers →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="cta-section__title">Start growing your freelance career today</h2>
+    <p class="cta-section__sub">Join hundreds of IT freelancers who are already getting more clients through DevBoost.</p>
+    <a href="{% url 'signup' %}" class="btn btn--white btn--lg">Create your free profile →</a>
+  </div>
+</section>
+
+{% endblock %}

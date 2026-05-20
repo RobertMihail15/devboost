@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+{% block title %}Browse IT Freelancers – DevBoost{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div class="page-header__tag">Talent Directory</div>
+    <h1 class="page-header__title">Browse IT Freelancers</h1>
+    <p class="page-header__sub">{{ freelancers|length }} profesionist{{ freelancers|length|pluralize:"," }} verificat{{ freelancers|length|pluralize:"," }} disponibil{{ freelancers|length|pluralize:"," }} pentru proiectul tău.</p>
+  </div>
+
+  <div class="filter-bar">
+    <a href="{% url 'freelancers' %}" class="filter-btn {% if not active_skill %}active{% endif %}">Toți</a>
+    {% for skill in skills %}
+    <a href="{% url 'freelancers' %}?skill={{ skill }}" class="filter-btn {% if active_skill == skill %}active{% endif %}">{{ skill }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="freelancers-grid">
+    {% for f in freelancers %}
+    <div class="freelancer-card">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div class="freelancer-card__avatar">{{ f.full_name|slice:":1"|upper }}</div>
+        <div>
+          <div class="freelancer-card__name">{{ f.full_name }}</div>
+          <span class="freelancer-card__skill">{{ f.skill }}</span>
+        </div>
+      </div>
+      <p class="freelancer-card__desc">{{ f.description|default:"Freelancer disponibil pentru proiecte." }}</p>
+      <div class="freelancer-card__meta">⏳ {{ f.experience_years }} an{{ f.experience_years|pluralize:"i" }} experiență</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a href="{% url 'freelancer_detail' f.id %}" class="btn btn--ghost btn--sm">Vezi profil</a>
+        <a href="{% url 'contact_freelancer' f.id %}" class="btn btn--outline btn--sm">Contactează →</a>
+      </div>
+    </div>
+    {% empty %}
+    <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--ink-muted);">
+      <div style="font-size:2.5rem; margin-bottom:12px;">🔍</div>
+      <p>Niciun freelancer găsit pentru acest filtru.</p>
+      <a href="{% url 'freelancers' %}" class="btn btn--ghost" style="margin-top:16px;">Elimină filtrul</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<section class="cta-section" style="margin-top:80px;">
+  <div class="container">
+    <h2 class="cta-section__title">Ești freelancer IT?</h2>
+    <p class="cta-section__sub">Înregistrează-te pe DevBoost și fii descoperit de clienți care caută exact skill-urile tale.</p>
+    <a href="{% url 'signup' %}" class="btn btn--white btn--lg">Creează-ți profilul gratuit →</a>
+  </div>
+</section>
+{% endblock %}

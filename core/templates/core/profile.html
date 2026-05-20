@@ -1,0 +1,166 @@
+{% extends 'core/base.html' %}
+{% block title %}Profilul meu – DevBoost{% endblock %}
+{% block content %}
+<div class="container" style="padding-top:48px; padding-bottom:80px;">
+  <div style="margin-bottom:28px;">
+    <div style="font-size:0.78rem; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">
+      {% if role == 'admin' %}Administrator{% elif role == 'freelancer' %}Cont Freelancer{% elif role == 'client' %}Cont Client{% endif %}
+    </div>
+    <h1 style="font-size:1.9rem; letter-spacing:-0.5px;">Profilul meu</h1>
+  </div>
+
+  {% if saved %}<div class="alert alert--success" style="margin-bottom:24px;">✅ Modificările au fost salvate!</div>{% endif %}
+  {% if error %}<div class="alert alert--error" style="margin-bottom:24px;">⚠️ {{ error }}</div>{% endif %}
+
+  <div class="profile-layout">
+    <!-- Sidebar -->
+    <div class="profile-sidebar">
+      <div class="profile-avatar-lg" style="{% if role == 'client' %}background:linear-gradient(135deg, #7c3aed 0%, #db2777 100%);{% endif %}">
+        {% if user.first_name %}{{ user.first_name|slice:":1"|upper }}{% else %}{{ user.username|slice:":1"|upper }}{% endif %}
+      </div>
+      <div class="profile-name">{{ user.first_name }} {{ user.last_name }}</div>
+      <div class="profile-email">{{ user.email }}</div>
+
+      {% if role == 'admin' %}
+        <span class="badge" style="background:#fef3c7; color:#92400e; margin:10px 0; display:inline-block;">⭐ Administrator</span>
+      {% elif role == 'freelancer' %}
+        <span class="badge" style="margin:6px 0; display:inline-block;">💼 Freelancer</span>
+        <div style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:10px;">{{ freelancer.skill }} · {{ freelancer.experience_years }} ani exp.</div>
+      {% elif role == 'client' %}
+        <span class="badge" style="background:#f5f3ff; color:#7c3aed; margin:6px 0; display:inline-block;">🔍 Client</span>
+        {% if client.company %}<div style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:10px;">{{ client.company }}</div>{% endif %}
+      {% endif %}
+
+      <div style="font-size:0.78rem; color:var(--ink-faint); margin-top:4px;">Membru din {{ user.date_joined|date:"M Y" }}</div>
+
+      {% if role == 'admin' %}
+        <a href="{% url 'admin_view' %}" class="btn btn--outline btn--sm" style="margin-top:18px; width:100%; justify-content:center;">📊 Dashboard Admin</a>
+      {% elif role == 'freelancer' %}
+        <a href="{% url 'freelancer_detail' freelancer.id %}" class="btn btn--outline btn--sm" style="margin-top:18px; width:100%; justify-content:center;">👁️ Profil public</a>
+      {% elif role == 'client' %}
+        <a href="{% url 'freelancers' %}" class="btn btn--outline btn--sm" style="margin-top:18px; width:100%; justify-content:center;">🔍 Caută freelanceri</a>
+      {% endif %}
+      <a href="{% url 'logout' %}" class="btn btn--ghost btn--sm" style="margin-top:8px; width:100%; justify-content:center; color:#dc2626;">🚪 Deconectare</a>
+    </div>
+
+    <!-- Right column -->
+    <div style="display:flex; flex-direction:column; gap:24px;">
+
+      <!-- Edit form -->
+      <div class="profile-main">
+        <h2 style="font-size:1.05rem; font-weight:700; margin-bottom:20px;">Editează informațiile</h2>
+        <form method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Nume complet</label>
+            <input type="text" name="full_name" value="{% if freelancer %}{{ freelancer.full_name }}{% elif client %}{{ client.full_name }}{% else %}{{ user.first_name }} {{ user.last_name }}{% endif %}" required>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" value="{{ user.email }}" disabled style="background:var(--surface-2); color:var(--ink-faint); cursor:not-allowed;">
+          </div>
+
+          {% if role == 'freelancer' %}
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Skill principal</label>
+              <select name="skill">{% for s in skills %}<option value="{{ s }}" {% if freelancer.skill == s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Ani experiență</label>
+              <input type="number" name="experience_years" value="{{ freelancer.experience_years }}" min="0" max="50">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:12px;">
+            <label>Descriere profil public</label>
+            <textarea name="description" style="min-height:110px;">{{ freelancer.description }}</textarea>
+            <p style="font-size:0.78rem; color:var(--ink-faint); margin-top:4px;">Apare pe profilul tău public vizibil pentru clienți.</p>
+          </div>
+          {% elif role == 'client' %}
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Companie</label>
+              <input type="text" name="company" value="{{ client.company }}" placeholder="ex. Acme SRL">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Industrie</label>
+              <select name="industry">
+                <option value="">Selectează…</option>
+                {% for i in industries %}<option value="{{ i }}" {% if client.industry == i %}selected{% endif %}>{{ i }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:12px;">
+            <label>Despre proiectele tale</label>
+            <textarea name="description" style="min-height:90px;">{{ client.description }}</textarea>
+          </div>
+          {% endif %}
+
+          <button type="submit" class="btn btn--primary" style="margin-top:4px;">💾 Salvează</button>
+        </form>
+      </div>
+
+      <!-- Mesaje primite (freelancer) -->
+      {% if received_messages is not None %}
+      <div class="profile-main">
+        <h2 style="font-size:1.05rem; font-weight:700; margin-bottom:16px;">
+          📨 Mesaje de la clienți
+          <span style="font-size:0.82rem; color:var(--ink-faint); font-weight:400; margin-left:6px;">{{ received_messages|length }}</span>
+        </h2>
+        {% if received_messages %}
+          {% for lead in received_messages %}
+          <div style="padding:16px; border:1px solid var(--surface-3); border-radius:var(--radius); margin-bottom:12px; background:var(--surface);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+              <div>
+                <strong style="font-size:0.95rem;">{{ lead.get_sender_name }}</strong>
+                <span style="font-size:0.8rem; color:var(--ink-faint); margin-left:8px;">{{ lead.get_sender_email }}</span>
+                {% if lead.client and lead.client.company %}
+                  <span style="font-size:0.78rem; background:var(--surface-2); color:var(--ink-muted); padding:2px 8px; border-radius:100px; margin-left:6px;">{{ lead.client.company }}</span>
+                {% endif %}
+              </div>
+              <span style="font-size:0.78rem; color:var(--ink-faint); white-space:nowrap;">{{ lead.created_at|date:"d M Y, H:i" }}</span>
+            </div>
+            <p style="font-size:0.9rem; color:var(--ink-muted); margin:0; line-height:1.65;">{{ lead.message }}</p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p style="color:var(--ink-faint); font-size:0.9rem;">Niciun mesaj primit încă. Clienții te vor contacta când vor fi interesați de profilul tău.</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Mesaje trimise (client) -->
+      {% if sent_messages is not None %}
+      <div class="profile-main">
+        <h2 style="font-size:1.05rem; font-weight:700; margin-bottom:16px;">
+          📤 Freelanceri contactați
+          <span style="font-size:0.82rem; color:var(--ink-faint); font-weight:400; margin-left:6px;">{{ sent_messages|length }}</span>
+        </h2>
+        {% if sent_messages %}
+          {% for lead in sent_messages %}
+          <div style="padding:16px; border:1px solid var(--surface-3); border-radius:var(--radius); margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:36px; height:36px; background:linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%); border-radius:8px; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-family:'Syne',sans-serif; font-size:0.9rem;">
+                  {{ lead.freelancer.full_name|slice:":1"|upper }}
+                </div>
+                <div>
+                  <a href="{% url 'freelancer_detail' lead.freelancer.id %}" style="font-weight:700; font-size:0.95rem;">{{ lead.freelancer.full_name }}</a>
+                  <span class="badge" style="margin-left:6px;">{{ lead.freelancer.skill }}</span>
+                </div>
+              </div>
+              <span style="font-size:0.78rem; color:var(--ink-faint);">{{ lead.created_at|date:"d M Y" }}</span>
+            </div>
+            <p style="font-size:0.88rem; color:var(--ink-muted); margin:0;">{{ lead.message|truncatechars:140 }}</p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p style="color:var(--ink-faint); font-size:0.9rem;">Nu ai contactat niciun freelancer încă. <a href="{% url 'freelancers' %}">Explorează freelancerii →</a></p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

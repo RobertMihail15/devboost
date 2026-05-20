@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+{% block title %}Blog – DevBoost | IT Freelance Tips{% endblock %}
+{% block meta_description %}Articole despre cum să obții clienți freelance, branding personal pentru developeri și SEO pentru freelanceri IT.{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div class="page-header__tag">Content Marketing</div>
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h1 class="page-header__title">DevBoost Blog</h1>
+        <p class="page-header__sub">Sfaturi practice pentru a-ți crește cariera freelance IT.</p>
+      </div>
+      {% if can_manage %}
+      <a href="{% url 'blog_add' %}" class="btn btn--primary">+ Articol nou</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if not posts %}
+  <div style="text-align:center; padding:60px 20px; color:var(--ink-muted);">
+    <div style="font-size:2.5rem; margin-bottom:12px;">📝</div>
+    <p>Nu există articole încă.</p>
+    {% if can_manage %}<a href="{% url 'blog_add' %}" class="btn btn--primary" style="margin-top:16px;">Adaugă primul articol</a>{% endif %}
+  </div>
+  {% else %}
+  <div class="blog-grid">
+    {% for post in posts %}
+    <article class="blog-card">
+      <div class="blog-card__img">
+        {% with icon=category_icons|default_if_none:'' %}
+          {% if post.category == 'SEO' %}🔍
+          {% elif post.category == 'Branding' %}🌟
+          {% elif post.category == 'Business' %}💰
+          {% elif post.category == 'Career' %}🚀
+          {% elif post.category == 'Tech' %}⚙️
+          {% else %}🎯{% endif %}
+        {% endwith %}
+      </div>
+      <div class="blog-card__body">
+        <div class="blog-card__cat">{{ post.category }}</div>
+        <h2 class="blog-card__title">{{ post.title }}</h2>
+        <p class="blog-card__excerpt">{{ post.excerpt }}</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+          <div style="display:flex; gap:8px;">
+            <a href="{% url 'blog_post' post.id %}" class="btn btn--outline btn--sm">Citește →</a>
+            {% if can_manage %}
+            <a href="{% url 'blog_edit' post.id %}" class="btn btn--ghost btn--sm">✏️</a>
+            <a href="{% url 'blog_delete' post.id %}" class="btn btn--ghost btn--sm" style="color:#dc2626;">🗑️</a>
+            {% endif %}
+          </div>
+          <span class="blog-card__date">{{ post.created_at|date:"d M Y" }}</span>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<section class="cta-section" style="margin-top:80px;">
+  <div class="container">
+    <h2 class="cta-section__title">Gata să aplici aceste sfaturi?</h2>
+    <p class="cta-section__sub">Alătură-te DevBoost și începe să-ți crești cariera freelance azi.</p>
+    <a href="{% url 'signup' %}" class="btn btn--white btn--lg">Join gratuit →</a>
+  </div>
+</section>
+{% endblock %}

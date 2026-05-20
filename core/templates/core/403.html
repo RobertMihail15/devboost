@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block title %}Acces interzis – DevBoost{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="error-page__code">403</div>
+  <h1 style="font-size:1.6rem; margin-bottom:10px;">Acces interzis</h1>
+  <p style="color:var(--ink-muted); margin-bottom:28px;">Nu ai permisiunile necesare pentru a accesa această pagină.<br>Trebuie să fii administrator.</p>
+  <div style="display:flex; gap:10px;">
+    <a href="{% url 'home' %}" class="btn btn--primary">← Acasă</a>
+    <a href="{% url 'profile' %}" class="btn btn--ghost">Profilul meu</a>
+  </div>
+</div>
+{% endblock %}

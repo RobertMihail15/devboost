@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ action }} articol – DevBoost{% endblock %}
+{% block content %}
+<div class="container" style="max-width:740px; padding-top:40px; padding-bottom:80px;">
+  <div style="margin-bottom:24px;">
+    <a href="{% url 'blog' %}" class="btn btn--ghost btn--sm">← Înapoi la Blog</a>
+  </div>
+  <div class="profile-main">
+    <h1 style="font-size:1.5rem; margin-bottom:24px;">{{ action }} articol</h1>
+    {% if error %}<div class="alert alert--error" style="margin-bottom:20px;">⚠️ {{ error }}</div>{% endif %}
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="title">Titlu *</label>
+        <input type="text" id="title" name="title" value="{{ post.title|default:'' }}" required placeholder="ex. How to get your first client">
+      </div>
+      <div class="form-group">
+        <label for="category">Categorie</label>
+        <select id="category" name="category">
+          {% for cat in categories %}
+          <option value="{{ cat }}" {% if post.category == cat %}selected{% endif %}>{{ cat }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="excerpt">Rezumat *</label>
+        <textarea id="excerpt" name="excerpt" style="min-height:80px;" required placeholder="O scurtă descriere a articolului…">{{ post.excerpt|default:'' }}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="body">Conținut articol *</label>
+        <textarea id="body" name="body" style="min-height:220px;" required placeholder="Conținutul complet al articolului…">{{ post.body|default:'' }}</textarea>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button type="submit" class="btn btn--primary">💾 Salvează articolul</button>
+        <a href="{% url 'blog' %}" class="btn btn--ghost">Anulează</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

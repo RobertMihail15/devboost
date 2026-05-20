@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+{% block title %}Social Media Campaigns – DevBoost{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div class="page-header__tag">Social Media Marketing</div>
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h1 class="page-header__title">Campaign Posts</h1>
+        <p class="page-header__sub">Campanii de social media care promovează freelancerii DevBoost.</p>
+      </div>
+      {% if can_manage %}
+      <a href="{% url 'campaign_add' %}" class="btn btn--primary">+ Campanie nouă</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if not posts %}
+  <div style="text-align:center; padding:60px 20px; color:var(--ink-muted);">
+    <div style="font-size:2.5rem; margin-bottom:12px;">📣</div>
+    <p>Nu există campanii încă.</p>
+    {% if can_manage %}<a href="{% url 'campaign_add' %}" class="btn btn--primary" style="margin-top:16px;">Adaugă prima campanie</a>{% endif %}
+  </div>
+  {% else %}
+  <div style="display:grid; gap:20px; max-width:700px;">
+    {% for post in posts %}
+    <div class="campaign-card">
+      <div class="campaign-card__header">
+        <span style="font-size:1.5rem;">{{ post.icon }}</span>
+        <div>
+          <div class="campaign-card__platform">{{ post.platform }}</div>
+          <div style="font-size:0.75rem; color:var(--ink-faint);">Campaign post · {{ post.created_at|date:"d M Y" }}</div>
+        </div>
+        <span class="badge" style="margin-left:auto;">{% if post.is_active %}Activ{% else %}Inactiv{% endif %}</span>
+        {% if can_manage %}
+        <div style="display:flex; gap:6px; margin-left:8px;">
+          <a href="{% url 'campaign_edit' post.id %}" class="btn btn--ghost btn--sm" style="padding:5px 10px;" title="Editează">✏️</a>
+          <a href="{% url 'campaign_delete' post.id %}" class="btn btn--ghost btn--sm" style="padding:5px 10px; color:#dc2626;" title="Șterge">🗑️</a>
+        </div>
+        {% endif %}
+      </div>
+      <p class="campaign-card__text">{{ post.text }}</p>
+      <div class="campaign-card__stats">
+        <span>❤️ {{ post.likes }} likes</span>
+        <span>💬 {{ post.comments }} comentarii</span>
+        <span>📊 Promoted</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div style="margin-top:56px; background:var(--surface-2); border-radius:var(--radius-lg); padding:32px; max-width:700px; margin-bottom:80px;">
+    <h2 style="font-size:1.2rem; margin-bottom:16px;">📊 Strategie campanii</h2>
+    <div style="display:grid; gap:12px;">
+      <div style="display:flex; gap:12px; align-items:start;">
+        <span style="font-size:1.2rem; flex-shrink:0;">🎯</span>
+        <div>
+          <strong style="font-size:0.9rem;">Audiență țintă</strong>
+          <p style="font-size:0.85rem; color:var(--ink-muted); margin-top:2px;">CTO-uri, fondatori de startup-uri, product manageri care caută talent freelance IT.</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; align-items:start;">
+        <span style="font-size:1.2rem; flex-shrink:0;">🔁</span>
+        <div>
+          <strong style="font-size:0.9rem;">Obiectiv funnel</strong>
+          <p style="font-size:0.85rem; color:var(--ink-muted); margin-top:2px;">Vizitator → Vizualizare profil → Signup → Lead → Conversie.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

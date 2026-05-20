@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}DevBoost – Grow Your Freelance IT Career{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}DevBoost is the #1 platform for IT freelancers to get clients, build their portfolio, and grow their online presence.{% endblock %}">
+  <meta name="keywords" content="freelance developers, IT services, dev portfolio, hire freelancers, IT freelancers">
+  <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+<body>
+
+<!-- ── Page Loading Screen ─────────────────────────────────────── -->
+<div id="page-loader">
+  <div class="loader-inner">
+    <div class="loader-code" id="loaderCode"></div>
+    <div class="loader-bar"><div class="loader-bar-fill" id="loaderBarFill"></div></div>
+    <div class="loader-label">DevBoost</div>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="container">
+    <div class="nav__inner">
+      <a href="{% url 'home' %}" class="nav__logo" style="text-decoration:none;">
+        <div class="nav__logo-icon">⚡</div>
+        Dev<span>Boost</span>
+      </a>
+      <ul class="nav__links" id="navLinks">
+        <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a></li>
+        <li><a href="{% url 'freelancers' %}" {% if request.resolver_match.url_name == 'freelancers' %}class="active"{% endif %}>Freelancers</a></li>
+        <li><a href="{% url 'blog' %}" {% if request.resolver_match.url_name == 'blog' %}class="active"{% endif %}>Blog</a></li>
+        <li><a href="{% url 'campaigns' %}" {% if request.resolver_match.url_name == 'campaigns' %}class="active"{% endif %}>Campaigns</a></li>
+        {% if user.is_authenticated and user.is_staff %}
+        <li><a href="{% url 'admin_view' %}" {% if request.resolver_match.url_name == 'admin_view' %}class="active"{% endif %}>Dashboard</a></li>
+        {% endif %}
+      </ul>
+      <div class="nav__auth">
+        {% if user.is_authenticated %}
+          <div class="nav__user-menu" id="userMenu">
+            <button class="nav__user-btn" id="userMenuBtn">
+              <div class="nav__avatar">{% if user.first_name %}{{ user.first_name|slice:":1"|upper }}{% else %}{{ user.username|slice:":1"|upper }}{% endif %}</div>
+              <span class="nav__user-name">{{ user.first_name|default:user.username }}</span>
+              {% if user.is_staff %}<span class="nav__role-badge">Admin</span>{% endif %}
+              <svg width="12" height="7" viewBox="0 0 12 7" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l5 5 5-5"/></svg>
+            </button>
+            <div class="nav__dropdown" id="userDropdown">
+              <a href="{% url 'profile' %}" class="nav__dropdown-item"><span>👤</span> Profilul meu</a>
+              {% if user.is_staff %}<a href="{% url 'admin_view' %}" class="nav__dropdown-item"><span>📊</span> Dashboard Admin</a>{% endif %}
+              <div class="nav__dropdown-divider"></div>
+              <a href="{% url 'logout' %}" class="nav__dropdown-item nav__dropdown-item--danger"><span>🚪</span> Deconectare</a>
+            </div>
+          </div>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn--ghost btn--sm">Log in</a>
+          <a href="{% url 'signup' %}" class="btn btn--primary btn--sm">Join Now</a>
+        {% endif %}
+      </div>
+      <div class="nav__hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__logo">Dev<span>Boost</span></div>
+      <div>© 2025 DevBoost. All rights reserved.</div>
+      <div class="footer__links">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'freelancers' %}">Freelancers</a>
+        <a href="{% url 'blog' %}">Blog</a>
+        <a href="{% url 'signup' %}">Join Now</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Loading screen ────────────────────────────────────────────────
+(function() {
+  const loader = document.getElementById('page-loader');
+  const codeEl = document.getElementById('loaderCode');
+  const barFill = document.getElementById('loaderBarFill');
+
+  const snippets = [
+    'const dev = new DevBoost()',
+    'await auth.login(user)',
+    'fetch("/api/freelancers/")',
+    'db.query(Freelancer.all())',
+    'render(<ProfilePage />)',
+    'git push origin main',
+    'npm run build --prod',
+    'docker compose up -d',
+    'SELECT * FROM leads;',
+    'res.status(200).json(ok)',
+  ];
+
+  let idx = Math.floor(Math.random() * snippets.length);
+  let charIdx = 0;
+  let currentText = snippets[idx];
+  let typingInterval;
+
+  function typeNext() {
+    if (charIdx <= currentText.length) {
+      codeEl.textContent = currentText.slice(0, charIdx);
+      charIdx++;
+    }
+  }
+  typingInterval = setInterval(typeNext, 28);
+
+  // Progress bar
+  let progress = 0;
+  const barInterval = setInterval(() => {
+    progress += Math.random() * 18 + 8;
+    if (progress > 100) progress = 100;
+    barFill.style.width = progress + '%';
+    if (progress >= 100) clearInterval(barInterval);
+  }, 60);
+
+  // Hide after page load
+  function hideLoader() {
+    clearInterval(typingInterval);
+    barFill.style.width = '100%';
+    setTimeout(() => {
+      loader.classList.add('loader--out');
+      setTimeout(() => { loader.style.display = 'none'; }, 380);
+    }, 120);
+  }
+
+  if (document.readyState === 'complete') {
+    setTimeout(hideLoader, 300);
+  } else {
+    window.addEventListener('load', () => setTimeout(hideLoader, 200));
+  }
+
+  // Trigger loader on internal navigation
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || link.target === '_blank') return;
+    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+
+    // Show loader
+    loader.style.display = 'flex';
+    loader.classList.remove('loader--out');
+    barFill.style.width = '0%';
+    charIdx = 0;
+    idx = Math.floor(Math.random() * snippets.length);
+    currentText = snippets[idx];
+    codeEl.textContent = '';
+
+    clearInterval(typingInterval);
+    typingInterval = setInterval(typeNext, 28);
+
+    let p2 = 0;
+    const b2 = setInterval(() => {
+      p2 += Math.random() * 22 + 10;
+      if (p2 > 88) p2 = 88;
+      barFill.style.width = p2 + '%';
+      if (p2 >= 88) clearInterval(b2);
+    }, 55);
+  });
+})();
+
+// ── Hamburger ─────────────────────────────────────────────────────
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// ── User dropdown ─────────────────────────────────────────────────
+const userMenuBtn = document.getElementById('userMenuBtn');
+const userDropdown = document.getElementById('userDropdown');
+if (userMenuBtn) {
+  userMenuBtn.addEventListener('click', e => { e.stopPropagation(); userDropdown.classList.toggle('open'); });
+  document.addEventListener('click', () => userDropdown.classList.remove('open'));
+}
+</script>
+</body>
+</html>

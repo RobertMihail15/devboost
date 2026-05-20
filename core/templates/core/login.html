@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% block title %}Log in – DevBoost{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">Dev<span>Boost</span></div>
+    <h1 class="auth-title">Bun venit înapoi</h1>
+    <p class="auth-sub">Intră în contul tău DevBoost</p>
+
+    {% if error %}
+    <div class="alert alert--error" style="margin-bottom:20px;">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
+      <div class="form-group">
+        <label for="username">Email</label>
+        <input type="email" id="username" name="username" placeholder="you@example.com" required autofocus>
+      </div>
+      <div class="form-group">
+        <label for="password">Parolă</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn--primary btn--lg" style="width:100%; justify-content:center;">
+        Intră în cont →
+      </button>
+    </form>
+
+    <div style="margin-top:20px; text-align:center; font-size:0.88rem; color:var(--ink-muted);">
+      Nu ai cont? <a href="{% url 'signup' %}">Înregistrează-te gratuit</a>
+    </div>
+
+    <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--surface-3); font-size:0.78rem; color:var(--ink-faint); text-align:center;">
+      <strong>Demo credentials:</strong><br>
+      🔐 Admin: <code>admin@devboost.com</code> / <code>admin123</code><br>
+      👤 Client: <code>client1@demo.com</code> / <code>demo123</code><br>
+      💼 Freelancer: <code>alex@demo.com</code> / <code>demo123</code>
+    </div>
+  </div>
+</div>
+{% endblock %}
