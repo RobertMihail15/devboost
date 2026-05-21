@@ -3,7 +3,14 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'devboost-secret-key-change-in-production'
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+
+ALLOWED_HOSTS = [
+    "*",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://devboost-dthcfub6d0gxb2gr.polandcentral-01.azurewebsites.net",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
